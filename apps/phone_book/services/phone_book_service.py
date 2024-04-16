@@ -2,13 +2,12 @@
 from posixpath import split
 from apps.phone_book.models import Contact
 from apps.phone_book.serializers import ContactSerializer
-from phone_book_app.utils.http_utils import getPayload
 from django.db.models import Q
 
 class PhoneBookService():
 
     def create_contact(self, request):
-        payload = getPayload(request)
+        payload = request.data
         new_contact =  Contact.objects.create(
             name=payload["name"],
             phone=payload["phone"],
@@ -25,21 +24,22 @@ class PhoneBookService():
             return Contact.objects.none
 
     def update_contact(self, request):
-        payload = getPayload(request)
+        payload = request.data
         id = payload["id"]
 
         try:
-            contact_instance = Contact.objects.filter(id=id)
+            contact_instance = Contact.objects.get(id=id)
             contact_instance.name = payload["name"]
             contact_instance.phone =payload["phone"]
             contact_instance.address = payload["address"]
             contact_instance.save()
+            return ContactSerializer(contact_instance).data
 
         except Contact.DoesNotExist as e:
             raise e
 
     def delete_contact(self, request):
-        payload = getPayload(request)
+        payload = request.data
         id = payload["id"]
 
         try:
@@ -57,7 +57,7 @@ class PhoneBookService():
 
         contacts = []
         if len(split_prompt) == 1 and split_prompt[0] == "":
-            contacts = Contact.objects.order_by('created_by')[:10]
+            contacts = Contact.objects.order_by('created_ts')[:10]
 
         else:
             search = Q()

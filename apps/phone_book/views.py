@@ -39,7 +39,9 @@ class UpdateContactView(APIView):
     serializer_class= ContactSerializer
 
     def post (self, request, *args, **kwargs):
+        print(request.data)
         serializer = self.serializer_class(data=request.data)
+
         if serializer.is_valid():
             try:
                 results = PhoneBookService().update_contact(request)
