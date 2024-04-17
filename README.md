@@ -2,8 +2,8 @@
 
 Installation
 # Clone the repository
-git clone https://github.com/username/project.git
-cd project
+git clone url
+cd to the folder
 
 # Create a virtual environment (optional but recommended)
 python -m venv venv
